@@ -1,14 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
-
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:studentapp/data/remote/AppException.dart';
-import 'package:studentapp/utils/Utils.dart';
+import 'package:studentapp/data/remote/app_exception.dart';
+import 'package:studentapp/utils/app_utils.dart';
 
-import 'BaseApiService.dart';
+import 'base_api_service.dart';
 
 class NetworkApiService extends BaseApiService {
   final BuildContext? context;
@@ -27,15 +26,18 @@ class NetworkApiService extends BaseApiService {
         //"authentication_key": "$tockenKey"
       };
 
-      Log.print(headers);
+      Log.print(
+        headers,
+      );
+      Log.print("Url-----------: $baseUrl$url$apikey");
       final response =
-          await http.get(Uri.parse(baseUrl + url), headers: headers);
+          await http.get(Uri.parse(baseUrl + url + apikey), headers: headers);
+
       responseJson = returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet Connection');
     }
 
-    Log.print("Url-----------: $baseUrl$url");
     Log.print("Response-----------: $responseJson");
     //debugPrint("Response: $responseJson");
     return responseJson;
@@ -48,7 +50,7 @@ class NetworkApiService extends BaseApiService {
     String url, {
     Map<String, dynamic>? data = const {},
   }) async {
-    debugPrint("🐣 Api Request: $baseUrl$url");
+    Log.print("Url-----------: $baseUrl$url$apikey");
     debugPrint("🐸 Request: $data");
     dynamic responseJson;
     try {
@@ -66,7 +68,7 @@ class NetworkApiService extends BaseApiService {
 
       Log.print(headers);
       final response = await http.put(
-        Uri.parse(baseUrl + url),
+        Uri.parse(baseUrl + url + apikey),
         body: jsonEncode(data),
         headers: headers,
       );
@@ -95,16 +97,7 @@ class NetworkApiService extends BaseApiService {
       // var tockenKey = await SharedPrefsUtil.getString(SharedPrefsUtil.tokenkey);
       Map<String, String> headers;
 
-      if (type == 1) {
-        headers = {
-          'Content-Type': 'application/json',
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Credentials": "true",
-          "Access-Control-Allow-Headers":
-              "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
-          "Access-Control-Allow-Methods": "POST, OPTIONS",
-        };
-      } else {
+      {
         headers = {
           'Content-Type': 'application/json',
           // "authentication_key": "$tockenKey",
@@ -117,7 +110,9 @@ class NetworkApiService extends BaseApiService {
       }
 
       Log.print(headers);
-      final response = await http.post(Uri.parse(baseUrl + url),
+
+      Log.print("Url-----------: $baseUrl$url$apikey");
+      final response = await http.post(Uri.parse(baseUrl + url + apikey),
           body: jsonEncode(data), headers: headers);
 
       //debugPrint('🦠 Response: ${response.body}');

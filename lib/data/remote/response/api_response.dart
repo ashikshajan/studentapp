@@ -1,5 +1,5 @@
 
-import 'package:studentapp/data/remote/response/Status.dart';
+import 'package:studentapp/data/remote/response/status.dart';
 
 class ApiResponse<T> {
   Status? status;

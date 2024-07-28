@@ -1,7 +1,7 @@
 
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:studentapp/utils/Utils.dart';
+import 'package:studentapp/utils/app_utils.dart';
 
 class SharedPrefsUtil {
   static const String loggedin = 'loggedin';

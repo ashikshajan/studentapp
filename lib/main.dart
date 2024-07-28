@@ -1,100 +1,20 @@
-
-
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:provider/provider.dart';
-import 'package:studentapp/data/remote/network/NetworkApiService.dart';
+import 'package:studentapp/data/remote/network/network_api_service.dart';
 import 'package:studentapp/repository/api_repository.dart';
-import 'package:studentapp/utils/Utils.dart';
-import 'package:studentapp/utils/app_routes.dart';
+import 'package:studentapp/utils/app_utils.dart';
+
 import 'package:studentapp/view/splash.dart';
-import 'package:studentapp/view_model/home/MoviesListVM.dart';
+import 'package:studentapp/view_model/classroom_model/calssroom_controller.dart';
+
+import 'package:studentapp/view_model/home_model/home_controller.dart';
+import 'package:studentapp/view_model/students_model/students_controller.dart';
+import 'package:studentapp/view_model/subject_model/subject_controller.dart';
 
 void main() {
   runApp(const MyApp());
 }
-
-final rootNavigatorKey = GlobalKey<NavigatorState>();
-final _shellNavigatorKey = GlobalKey<NavigatorState>();
-
-class RouterTransitionFactory {
-  static CustomTransitionPage getTransitionPage(
-      {required BuildContext context,
-      required GoRouterState state,
-      required Widget child,
-      required String type}) {
-    return CustomTransitionPage(
-        key: state.pageKey,
-        child: child,
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          switch (type) {
-            case 'fade':
-              return FadeTransition(opacity: animation, child: child);
-            case 'rotation':
-              return RotationTransition(turns: animation, child: child);
-            case 'size':
-              return SizeTransition(sizeFactor: animation, child: child);
-            case 'scale':
-              return ScaleTransition(scale: animation, child: child);
-            default:
-              return FadeTransition(opacity: animation, child: child);
-          }
-        });
-  }
-}
-
-final GoRouter _router = GoRouter(
-  initialLocation: AppRoutes.splash,
-  navigatorKey: rootNavigatorKey,
-  routes: [
-    GoRoute(
-        path: AppRoutes.splash,
-        builder: (context, state) {
-          return const SplashScreen();
-        },
-        pageBuilder: (context, state) {
-          return RouterTransitionFactory.getTransitionPage(
-            context: context,
-            state: state,
-            child: const SplashScreen(),
-            type: 'fade',
-          );
-        }),
-
-    // ShellRoute(
-    //   navigatorKey: _shellNavigatorKey,
-    //   pageBuilder: (context, state, child) {
-    //     return NoTransitionPage(
-    //         child: Dashboard(
-    //       child: child,
-    //     ));
-    //   },
-    //   routes: [
-
-    //     GoRoute(
-    //         path: AppRoutes.viewVehicleDet,
-    //         parentNavigatorKey: _shellNavigatorKey,
-    //         builder: (context, state) {
-    //           return const ViewVehicleDetails();
-    //         },
-    //         pageBuilder: (context, state) {
-    //  FromPage args = state.extra as FromPage;
-    //           return RouterTransitionFactory.getTransitionPage(
-    //             context: context,
-    //             state: state,
-    //             child: const ViewVehicleDetails(
-    //
-    //
-    //
-    //  arguments: args,),
-    //             type: 'fade',
-    //           );
-    //         }),
-
-    //   ],
-    // ),
-  ],
-);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -104,13 +24,19 @@ class MyApp extends StatelessWidget {
     final apiRepo = ApiRepository(NetworkApiService(context: context));
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<MoviesListVM>(
-            create: (_) => MoviesListVM(apiRepository: apiRepo)),
+        ChangeNotifierProvider<HomeController>(
+            create: (_) => HomeController(apiRepository: apiRepo)),
+        ChangeNotifierProvider<CalssroomController>(
+            create: (_) => CalssroomController(apiRepository: apiRepo)),
+        ChangeNotifierProvider<StudentsController>(
+            create: (_) => StudentsController(apiRepository: apiRepo)),
+        ChangeNotifierProvider<SubjectsController>(
+            create: (_) => SubjectsController(apiRepository: apiRepo)),
       ],
-      child: MaterialApp.router(
+      child: MaterialApp(
+        home: const SplashScreen(),
         debugShowCheckedModeBanner: false,
         color: AppUtil.appprimaryclr,
-        routerConfig: _router,
         builder: (context, child) {
           final data = MediaQuery.of(context);
 

@@ -1,5 +1,7 @@
 abstract class BaseApiService {
-  final String baseUrl = "http://192.168.1.34:5000/trip_app/"; //LOCAL
+  final String baseUrl = "https://nibrahim.pythonanywhere.com/"; //LOCAL
+
+  final String apikey = "?api_key=2966A";
   Future<dynamic> get(String url);
 
   Future<dynamic> post(String url,
